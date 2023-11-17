@@ -1,0 +1,115 @@
+{
+    "pokemon": [
+      {
+        "id": 1,
+        "numero_pokedex": 1,
+        "nom": "Bulbasaur",
+        "taille": 0.7,
+        "poids": 6.9,
+        "statistiques_base": "...",
+        "image": "bulbasaur.jpg",
+        "types": [1, 2],
+        "competences": [1, 2]
+      },
+      {
+        "id": 2,
+        "numero_pokedex": 2,
+        "nom": "Ivysaur",
+        "taille": 1.0,
+        "poids": 13.0,
+        "statistiques_base": "...",
+        "image": "ivysaur.jpg",
+        "types": [1, 2],
+        "competences": [3, 4]
+      },
+      {
+        "id": 3,
+        "numero_pokedex": 3,
+        "nom": "Venusaur",
+        "taille": 2.0,
+        "poids": 100.0,
+        "statistiques_base": "...",
+        "image": "venusaur.jpg",
+        "types": [1, 2],
+        "competences": [5, 6]
+      },
+      {
+        "id": 4,
+        "numero_pokedex": 4,
+        "nom": "Charmander",
+        "taille": 0.6,
+        "poids": 8.5,
+        "statistiques_base": "...",
+        "image": "charmander.jpg",
+        "types": [2],
+        "competences": [7, 8]
+      },
+      {
+        "id": 5,
+        "numero_pokedex": 5,
+        "nom": "Charmeleon",
+        "taille": 1.1,
+        "poids": 19.0,
+        "statistiques_base": "...",
+        "image": "charmeleon.jpg",
+        "types": [2],
+        "competences": [9, 10]
+      },
+      {
+        "id": 6,
+        "numero_pokedex": 6,
+        "nom": "Charizard",
+        "taille": 1.7,
+        "poids": 90.5,
+        "statistiques_base": "...",
+        "image": "charizard.jpg",
+        "types": [2, 3],
+        "competences": [11, 12]
+      },
+      {
+        "id": 7,
+        "numero_pokedex": 7,
+        "nom": "Squirtle",
+        "taille": 0.5,
+        "poids": 9.0,
+        "statistiques_base": "...",
+        "image": "squirtle.jpg",
+        "types": [3],
+        "competences": [13, 14]
+      },
+      {
+        "id": 8,
+        "numero_pokedex": 8,
+        "nom": "Wartortle",
+        "taille": 1.0,
+        "poids": 22.5,
+        "statistiques_base": "...",
+        "image": "wartortle.jpg",
+        "types": [3],
+        "competences": [15, 16]
+      },
+      {
+        "id": 9,
+        "numero_pokedex": 9,
+        "nom": "Blastoise",
+        "taille": 1.6,
+        "poids": 85.5,
+        "statistiques_base": "...",
+        "image": "blastoise.jpg",
+        "types": [3],
+        "competences": [17, 18]
+      },
+      {
+        "id": 10,
+        "numero_pokedex": 10,
+        "nom": "Caterpie",
+        "taille": 0.3,
+        "poids": 2.9,
+        "statistiques_base": "...",
+        "image": "caterpie.jpg",
+        "types": [10],
+        "competences": [19, 20]
+      }
+    ]
+  }
+  
