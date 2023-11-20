@@ -62,17 +62,20 @@ def insert_competences():
         competence_puissance = competence_info['puissance']
         competence_precision = competence_info['precision']
         competence_pp_max = competence_info['pp_max']
-        type_id = competence_info['type_id']
 
         query = "SELECT * FROM Competence WHERE id = %s"
         cursor.execute(query, (competence_id,))
 
         if not cursor.fetchone():
             insert_query = """
-                INSERT INTO Competence (id, nom, description, puissance, precision_value, pp_max, type_id)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO Competence (id, nom, description, puissance, precision_value, pp_max)
+                VALUES (%s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(insert_query, (competence_id, competence_nom, competence_description, competence_puissance, competence_precision, competence_pp_max, type_id))
+            cursor.execute(insert_query, (competence_id, competence_nom, competence_description, competence_puissance, competence_precision, competence_pp_max))
+            
+        for type_id in competence_info['types']:
+                insert_type_query = "INSERT INTO Competence_Type (competence_id, type_id) VALUES (%s, %s)"
+                cursor.execute(insert_type_query, (competence_id, type_id))
 
     db.commit()
 
@@ -114,6 +117,16 @@ class Pokemon:
         self.types = types
         self.competences = competences
         
+class Abilitie: 
+    def __init__(self, id, nom, description, puissance, precision_value, pp_max, types):
+        self.id = id
+        self.nom = nom
+        self.description = description
+        self.puissance = puissance
+        self.precision_value = precision_value
+        self.pp_max = pp_max
+        self.types = types
+        
 class NewPokemon(BaseModel):
     id: int
     numero_pokedex: int
@@ -129,6 +142,7 @@ class NewType(BaseModel):
     nom: str
         
 class UpdatePokemon(BaseModel):
+    numero_pokedex: int
     nom: str
     taille: float
     poids: float
@@ -143,7 +157,7 @@ class UpdateAbility(BaseModel):
     puissance: int
     precision: int
     pp_max: int
-    type_id: int
+    types: List[int]
         
 class UpdateType(BaseModel):
     nom: str
@@ -257,10 +271,30 @@ def get_all_abilities():
     try:
         cursor = db.cursor(dictionary=True)
 
-        query = "SELECT * FROM Competence"
+        query = """
+        SELECT c.id, c.nom, c.description, c.puissance, c.precision_value, c.pp_max,
+		        GROUP_CONCAT(DISTINCT t.nom) as types
+        FROM Competence c
+        LEFT JOIN Competence_Type ct ON c.id = ct.competence_id
+        LEFT JOIN Type t ON ct.type_id = t.id
+        GROUP BY c.id
+        """
         cursor.execute(query)
-        abilities = cursor.fetchall()
-
+        abilities_data = cursor.fetchall()
+        
+        abilities = []
+        for abilitie_data in abilities_data:
+            abilitie = Abilitie(
+                id=abilitie_data["id"],
+                nom=abilitie_data["nom"],
+                description=abilitie_data["description"],
+                puissance=abilitie_data["puissance"],
+                precision_value=abilitie_data["precision_value"],
+                pp_max=abilitie_data["pp_max"],
+                types=abilitie_data["types"].split(",") if abilitie_data["types"] else [],
+            )
+            abilities.append(abilitie)
+            
         return abilities
 
     except Exception as e:
@@ -319,11 +353,11 @@ def update_pokemon(pokemon_id: int = Path(..., title="ID du Pokémon à modifier
 
         update_pokemon_query = """
             UPDATE Pokemon
-            SET nom = %s, taille = %s, poids = %s, statistiques_base = %s, image = %s
+            SET numero_pokedex = %s, nom = %s, taille = %s, poids = %s, statistiques_base = %s, image = %s
             WHERE id = %s
         """
         cursor.execute(update_pokemon_query, (
-            update_data.nom, update_data.taille, update_data.poids,
+            update_data.numero_pokedex, update_data.nom, update_data.taille, update_data.poids,
             update_data.statistiques_base, update_data.image, pokemon_id
         ))
 
@@ -356,13 +390,20 @@ def update_ability(ability_id: int = Path(..., title="ID de la compétence à mo
 
         update_ability_query = """
             UPDATE Competence
-            SET nom = %s, description = %s, puissance = %s, precision = %s, pp_max = %s, type_id = %s
+            SET nom = %s, description = %s, puissance = %s, precision_value = %s, pp_max = %s
             WHERE id = %s
         """
         cursor.execute(update_ability_query, (
             update_data.nom, update_data.description, update_data.puissance,
-            update_data.precision, update_data.pp_max, update_data.type_id, ability_id
+            update_data.precision, update_data.pp_max, ability_id
         ))
+        
+        delete_types_query = "DELETE FROM Competence_Type WHERE competence_id = %s"
+        cursor.execute(delete_types_query, (ability_id,))
+
+        for type_id in update_data.types:
+            insert_type_query = "INSERT INTO Competence_Type (competence_id, type_id) VALUES (%s, %s)"
+            cursor.execute(insert_type_query, (ability_id, type_id))
 
         db.commit()
 
